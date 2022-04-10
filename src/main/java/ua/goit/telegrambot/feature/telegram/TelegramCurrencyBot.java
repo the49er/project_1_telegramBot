@@ -1,4 +1,4 @@
-package ua.goit.telegrambot.telegram;
+package ua.goit.telegrambot.feature.telegram;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 

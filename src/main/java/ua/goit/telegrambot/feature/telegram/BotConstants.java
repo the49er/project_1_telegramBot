@@ -1,4 +1,4 @@
-package ua.goit.telegrambot.telegram;
+package ua.goit.telegrambot.feature.telegram;
 
 public class BotConstants {
 
