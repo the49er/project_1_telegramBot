@@ -2,75 +2,83 @@ package ua.goit.telegrambot.feature.currency;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.jsoup.Jsoup;
+import lombok.Data;
 import ua.goit.telegrambot.feature.currency.dto.Currency;
-import ua.goit.telegrambot.feature.currency.dto.CurrencyItemMono;
+import ua.goit.telegrambot.feature.util.Utilities;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MonoCurrencyService implements CurrencyService{
+public class MonoCurrencyService implements CurrencyService {
+    public static final String URL = "https://api.monobank.ua/bank/currency";
+
+
     @Override
     public List<Double> getRate(Currency currency) {
 
-        String url = "https://api.monobank.ua/bank/currency";
-
         //Get JSON
-        String json;
-        try {
-            json = Jsoup
-                    .connect(url)
-                    .ignoreContentType(true)
-                    .get()
-                    .body()
-                    .text();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IllegalStateException("Can't connect to Mono API");
-        }
+        String json = Utilities.getAPIRequest(URL);
 
-
-        json = json.replace("840", "USD")
-                .replace("978", "EUR")
-                .replace("980", "UAH")
-                .replace("643", "RUB");
-
+        //replace for enum Currency
+        String replaceJson = json
+                .replace(":840", ":USD")
+                .replace(":978", ":EUR")
+                .replace(":980", ":UAH")
+                .replace(":643", ":RUB");
 
         //Convert json => Java Object
         Type typeToken = TypeToken
                 .getParameterized(List.class, CurrencyItemMono.class)
                 .getType();
-        List<CurrencyItemMono> currencyItemMono = new Gson().fromJson(json, typeToken);
+        List<CurrencyItemMono> currencyItemMono = new Gson().fromJson(replaceJson, typeToken);
 
-        //Find currency
-        /*return currencyItems.stream()
-                .filter(it -> it.getCcy() == currency)
-                .filter(it -> it.getBase_ccy() == Currency.UAH)
-                .map(currencyItem -> currencyItem.getBuy())
-                //.map(currencyItem -> currencyItem.getSale())
-                .findFirst()
-                .orElseThrow();*/
-
-        Float monoBuy = currencyItemMono.stream()
-                .filter(it -> it.getCurrencyCodeA() == currency)
+        //Find currency mono have delay ~ 5 min, we take all in one
+        Float monoBuyEUR = currencyItemMono.stream()
+                .filter(it -> it.getCurrencyCodeA() == Currency.EUR)
                 .filter(it -> it.getCurrencyCodeB() == Currency.UAH)
-                .map(it -> it.getRateBuy())
+                .map(CurrencyItemMono::getRateBuy)
                 .findFirst()
                 .orElseThrow();
 
-        Float monoSele = currencyItemMono.stream()
-                .filter(it -> it.getCurrencyCodeA() == currency)
+        Float monoSaleEUR = currencyItemMono.stream()
+                .filter(it -> it.getCurrencyCodeA() == Currency.EUR)
                 .filter(it -> it.getCurrencyCodeB() == Currency.UAH)
-                .map(it -> it.getRateSell())
+                .map(CurrencyItemMono::getRateSell)
                 .findFirst()
                 .orElseThrow();
 
-        List<Double> buySeal = new ArrayList<>();
-        buySeal.add((double) monoBuy);
-        buySeal.add((double) monoSele);
+    Float monoBuyUSD = currencyItemMono.stream()
+                .filter(it -> it.getCurrencyCodeA() == Currency.USD)
+                .filter(it -> it.getCurrencyCodeB() == Currency.UAH)
+                .map(CurrencyItemMono::getRateBuy)
+                .findFirst()
+                .orElseThrow();
 
-        return buySeal;
+        Float monoSaleUSD = currencyItemMono.stream()
+                .filter(it -> it.getCurrencyCodeA() == Currency.USD)
+                .filter(it -> it.getCurrencyCodeB() == Currency.UAH)
+                .map(CurrencyItemMono::getRateSell)
+                .findFirst()
+                .orElseThrow();
+
+        List<Double> sellBuyRate = new ArrayList<>();
+        sellBuyRate.add((double) monoBuyUSD);
+        sellBuyRate.add((double) monoSaleUSD);
+        sellBuyRate.add((double) monoBuyEUR);
+        sellBuyRate.add((double) monoSaleEUR);
+
+        return sellBuyRate;
     }
+
+    @Data
+    public static class CurrencyItemMono {
+        private Currency currencyCodeA;
+        private Currency currencyCodeB;
+        private int date;
+        private float rateBuy;
+        private float rateSell;
+        private float rateCross;
+    }
+
 }

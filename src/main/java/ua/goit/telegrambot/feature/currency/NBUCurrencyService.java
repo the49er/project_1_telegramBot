@@ -2,34 +2,23 @@ package ua.goit.telegrambot.feature.currency;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.jsoup.Jsoup;
+import lombok.Data;
 import ua.goit.telegrambot.feature.currency.dto.Currency;
-import ua.goit.telegrambot.feature.currency.dto.CurrencyItemNBU;
+import ua.goit.telegrambot.feature.util.Utilities;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class NBUCurrencyService implements CurrencyService {
+    public static final String URL = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
 
     @Override
     public List<Double> getRate(Currency currency) {
-        String url = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
 
         //Get JSON
-        String json;
-        try {
-            json = Jsoup
-                    .connect(url)
-                    .ignoreContentType(true)
-                    .get()
-                    .body()
-                    .text();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IllegalStateException("Can't connect to NBU API");
-        }
+        String json = Utilities.getAPIRequest(URL);
 
         //Convert json => Java Object
         Type typeToken = TypeToken
@@ -40,19 +29,23 @@ public class NBUCurrencyService implements CurrencyService {
         //Find currency
         Float nbuBuy = currencyItemsNBU.stream()
                 .filter(it -> it.getCc() == currency)
-                .map(it -> it.getRate())
+                .map(CurrencyItemNBU::getRate)
                 .findFirst()
                 .orElseThrow();
 
-        List<Double> buySeal = new ArrayList<>();
-        buySeal.add((double) nbuBuy);
+        List<Double> buyRate = new ArrayList<>();
+        buyRate.add((double) nbuBuy);
 
-        return buySeal;
-
-        /*return currencyItemsNBU.stream()
-                .filter(it -> it.getCc() == currency)
-                .map(it -> it.getRate())
-                .findFirst()
-                .orElseThrow();*/
+        return buyRate;
     }
+
+    @Data
+    public static class CurrencyItemNBU {
+        private int r030;
+        private String txt;
+        private float rate;
+        private Currency cc;
+        private String exchangedate;
+    }
+
 }
