@@ -1,7 +1,5 @@
-package ua.goit.telegrambot.telegram;
+package ua.goit.telegrambot.feature.telegram;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -21,7 +19,8 @@ public class TelegramCurrencyBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
 
         if (update.hasMessage() && update.getMessage().hasText()) {
-
+            System.out.println(update.getMessage().getText());
+            System.out.println(update.getMessage().getFrom().getFirstName()+ " " + update.getMessage().getFrom().getUserName());
             String messageReceived = update.getMessage().getText();
             long chat_id = update.getMessage().getChatId();
 
