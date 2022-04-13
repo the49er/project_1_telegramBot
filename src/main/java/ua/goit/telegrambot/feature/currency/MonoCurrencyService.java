@@ -63,13 +63,20 @@ public class MonoCurrencyService implements CurrencyService {
                 .map(CurrencyItemMono::getRateSell)
                 .findFirst()
                 .orElseThrow();
-
+        //GBP
+        Float monoCrossCurseGBP = currencyItemMono.stream()
+                .filter(it -> it.getCurrencyCodeA() == Currency.GBP)
+                .filter(it -> it.getCurrencyCodeB() == Currency.UAH)
+                .map(CurrencyItemMono::getRateCross)
+                .findFirst()
+                .orElseThrow();
 
         List<Double> sellBuyRate = new ArrayList<>();
         sellBuyRate.add((double) monoBuyUSD);
         sellBuyRate.add((double) monoSaleUSD);
         sellBuyRate.add((double) monoBuyEUR);
         sellBuyRate.add((double) monoSaleEUR);
+        sellBuyRate.add((double) monoCrossCurseGBP);
 
         return sellBuyRate;
     }

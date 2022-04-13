@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class FileUpdate extends Thread {
-    private static final String ABSOLUTE_PATH = "src\\main\\resources\\Currency_rates.txt";
+    private static final String ABSOLUTE_PATH = "src\\main\\resources\\Currency_rates.json";
 
     //update file with currency every 6 min
     @Override
@@ -41,22 +41,31 @@ public class FileUpdate extends Thread {
                         System.err.println(e.getMessage());
                     }
                 }
-
+                
                 try (FileWriter writer = new FileWriter(file)) {
-                    writer.write("bank NBU" +
-                            "\nbuyUSD " + nbuRateUSD.get(0) +
-                            "\nbuyEUR " + nbuRateEUR.get(0) +
-                            "\nbuyGBP " + nbuRateGBP.get(0) +
-                            "\nbank Privat" +
-                            "\nbuyUSD " + privateRateUSD.get(0) +
-                            "\nsaleUSD " + privateRateUSD.get(1) +
-                            "\nbuyEUR " + privateRateEUR.get(0) +
-                            "\nsaleEUR " + privateRateEUR.get(1) +
-                            "\nbank Mono" +
-                            "\nbuyUSD " + monoRateUSD.get(0) +
-                            "\nsaleUSD " + monoRateUSD.get(1) +
-                            "\nbuyEUR " + monoRateUSD.get(2) +
-                            "\nsaleEUR " + monoRateUSD.get(3));
+                    writer.write("[\n" +
+                            "{\n" +
+                            "  \"bank\": \"NBU\",\n" +
+                            "  \"buyUSD\": \"" + nbuRateUSD.get(0) + "\",\n" +
+                            "  \"buyEUR\": \"" + nbuRateEUR.get(0) + "\",\n" +
+                            "  \"buyGBP\": \"" + nbuRateGBP.get(0) + "\"\n" +
+                            "},\n" +
+                                    "{\n" +
+                                    "  \"bank\": \"Privat\",\n" +
+                                    "  \"buyUSD\": \"" + privateRateUSD.get(0) + "\",\n" +
+                                    "  \"saleUSD\": \"" + privateRateUSD.get(1) + "\",\n" +
+                                    "  \"buyEUR\": \"" + privateRateEUR.get(0) + "\",\n" +
+                                    "  \"saleEUR\": \"" + privateRateEUR.get(1) + "\"\n" +
+                                    "},\n" +
+                                            "{\n" +
+                                            "  \"bank\": \"Mono\",\n" +
+                                            "  \"buyUSD\": \"" + monoRateUSD.get(0) + "\",\n" +
+                                            "  \"saleUSD\": \"" + monoRateUSD.get(1) + "\",\n" +
+                                            "  \"buyEUR\": \"" + monoRateUSD.get(2) + "\",\n" +
+                                            "  \"saleEUR\": \"" + monoRateUSD.get(3) + "\",\n" +
+                                            "  \"CrossCurseGBP\": \"" + monoRateUSD.get(4) + "\"\n" +
+                                            "}\n" +
+                            "]");
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
                 }
