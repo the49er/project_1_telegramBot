@@ -25,7 +25,7 @@ public class MonoCurrencyService implements CurrencyService {
                 .replace(":840", ":USD")
                 .replace(":978", ":EUR")
                 .replace(":980", ":UAH")
-                .replace(":643", ":RUB");
+                .replace(":826", ":GBP");
 
         //Convert json => Java Object
         Type typeToken = TypeToken
@@ -34,6 +34,7 @@ public class MonoCurrencyService implements CurrencyService {
         List<CurrencyItemMono> currencyItemMono = new Gson().fromJson(replaceJson, typeToken);
 
         //Find currency mono have delay ~ 5 min, we take all in one
+        //EUR
         Float monoBuyEUR = currencyItemMono.stream()
                 .filter(it -> it.getCurrencyCodeA() == Currency.EUR)
                 .filter(it -> it.getCurrencyCodeB() == Currency.UAH)
@@ -48,7 +49,8 @@ public class MonoCurrencyService implements CurrencyService {
                 .findFirst()
                 .orElseThrow();
 
-    Float monoBuyUSD = currencyItemMono.stream()
+        //USD
+        Float monoBuyUSD = currencyItemMono.stream()
                 .filter(it -> it.getCurrencyCodeA() == Currency.USD)
                 .filter(it -> it.getCurrencyCodeB() == Currency.UAH)
                 .map(CurrencyItemMono::getRateBuy)
@@ -61,6 +63,7 @@ public class MonoCurrencyService implements CurrencyService {
                 .map(CurrencyItemMono::getRateSell)
                 .findFirst()
                 .orElseThrow();
+
 
         List<Double> sellBuyRate = new ArrayList<>();
         sellBuyRate.add((double) monoBuyUSD);

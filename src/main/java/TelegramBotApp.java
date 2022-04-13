@@ -25,14 +25,18 @@ public class TelegramBotApp {
         System.out.println("Privat buy USD = " + privateRate.get(0));
         System.out.println("Privat sale USD = " + privateRate.get(1) + "\n");*/
 
-       /* //Test Mono
+        /*//Test Mono
         CurrencyService currencyServiceMono = new MonoCurrencyService();
-        //System.out.println(currencyServiceMono.getRate(Currency.USD).get(0));
+        *//*System.out.println(currencyServiceMono.getRate(Currency.USD).get(0));
+        System.out.println(currencyServiceMono.getRate(Currency.USD).get(1));
+        System.out.println(currencyServiceMono.getRate(Currency.USD).get(0));*//*
         List<Double> monoRate = currencyServiceMono.getRate(Currency.USD);
-        System.out.println("Mono buy USD = " + monoRate.get(0));
+        *//*System.out.println("Mono buy USD = " + monoRate.get(0));
         System.out.println("Mono sale USD = " + monoRate.get(1));
         System.out.println("Mono buy EUR = " + monoRate.get(2));
-        System.out.println("Mono sale EUR = " + monoRate.get(3));*/
+        System.out.println("Mono sale EUR = " + monoRate.get(3));*//*
+        System.out.println("Mono buy GBP = " + monoRate.get(4));
+        System.out.println("Mono sale GBP = " + monoRate.get(5));*/
     }
 
 }

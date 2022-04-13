@@ -21,6 +21,7 @@ public class FileUpdate extends Thread {
                 CurrencyService currencyServiceNBU = new NBUCurrencyService();
                 List<Double> nbuRateUSD = currencyServiceNBU.getRate(Currency.USD);
                 List<Double> nbuRateEUR = currencyServiceNBU.getRate(Currency.EUR);
+                List<Double> nbuRateGBP = currencyServiceNBU.getRate(Currency.GBP);
 
                 CurrencyService currencyServicePrivat = new PrivateBankCurrencyService();
                 List<Double> privateRateUSD = currencyServicePrivat.getRate(Currency.USD);
@@ -42,19 +43,20 @@ public class FileUpdate extends Thread {
                 }
 
                 try (FileWriter writer = new FileWriter(file)) {
-                    writer.write("NBU" +
-                            "\nbuy USD = " + nbuRateUSD.get(0) +
-                            "\nbuy EUR = " + nbuRateEUR.get(0) +
-                            "\nPrivat" +
-                            "\nbuy USD = " + privateRateUSD.get(0) +
-                            "\nsale USD = " + privateRateUSD.get(1) +
-                            "\nbuy EUR = " + privateRateEUR.get(0) +
-                            "\nsale EUR = " + privateRateEUR.get(1) +
-                            "\nMono" +
-                            "\nbuy USD = " + monoRateUSD.get(0) +
-                            "\nsale USD " + monoRateUSD.get(1) +
-                            "\nbuy EUR = " + monoRateUSD.get(2) +
-                            "\nsale EUR = " + monoRateUSD.get(3));
+                    writer.write("bank NBU" +
+                            "\nbuyUSD " + nbuRateUSD.get(0) +
+                            "\nbuyEUR " + nbuRateEUR.get(0) +
+                            "\nbuyGBP " + nbuRateGBP.get(0) +
+                            "\nbank Privat" +
+                            "\nbuyUSD " + privateRateUSD.get(0) +
+                            "\nsaleUSD " + privateRateUSD.get(1) +
+                            "\nbuyEUR " + privateRateEUR.get(0) +
+                            "\nsaleEUR " + privateRateEUR.get(1) +
+                            "\nbank Mono" +
+                            "\nbuyUSD " + monoRateUSD.get(0) +
+                            "\nsaleUSD " + monoRateUSD.get(1) +
+                            "\nbuyEUR " + monoRateUSD.get(2) +
+                            "\nsaleEUR " + monoRateUSD.get(3));
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
                 }
